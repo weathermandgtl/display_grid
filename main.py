@@ -3,10 +3,11 @@ from data import csv_
 import requests
 
 params = {
-    'lat': 39.2,
-    'lon': -119.9
+    'lat': 44,
+    'lon': -85
 }
 requesting = ['point', 'neighbors', 'temps', 'intensities']
+# requesting = ['point', 'neighbors', 'temps']
 
 if 'point' in requesting:
     response = requests.get(url=f'https://nwsgridpointsnew-production.up.railway.app/point', params=params)
@@ -21,10 +22,12 @@ if 'neighbors' in requesting:
 if 'temps' in requesting:
     response = requests.get(url=f'https://nwsgridpointsnew-production.up.railway.app/temps', params=params)
     temp_arrays = response.json()
+    print(temp_arrays)
     csv_.input_temp_conds(temp_arrays)
     sheets_arrays.input_temp_conds()
 if 'intensities' in requesting:
     response = requests.get(url=f'https://nwsgridpointsnew-production.up.railway.app/intensities', params=params)
     intensity_arrays = response.json()
+    print(intensity_arrays)
     csv_.input_intensities(intensity_arrays)
     sheets_arrays.input_intensities()

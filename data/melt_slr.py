@@ -49,19 +49,21 @@ all_stacks = [[], [], [{
     "layerFrznAccu": 0}]]
 
 for i, hour in enumerate(forecast[3:], start=3):
+    hour_snow = float(hour['hourSnowAccu'])
     hour_rain = float(hour['hourRainAccu'])
     hour_sleet = float(hour['hourSleetAccu'])
     hour_frzg = float(hour['hourFrzgAccu'])
+    hour_frzn = float(hour['hourFrznAccu'])
     hour_slr = float(hour['hourSlr'])
     hour_melt = -float(hour['hourMelt'])
     if hour_rain or hour_sleet or hour_frzg:   #if mix, cap slr at 10
         hour_slr = 10 if hour_slr > 10 else hour_slr
     hour_accumulations = {
-        "layerSnowAccu": float(hour['hourSnowAccu']),
-        "layerSnowSlrAccu": float(hour['hourSnowAccu']) * (hour_slr / 10),
+        "layerSnowAccu": hour_snow,
+        "layerSnowSlrAccu": hour_snow * (hour_slr / 10),
         "layerSleetAccu": hour_sleet,
         "layerFrzgAccu": hour_frzg,
-        "layerFrznAccu": float(hour['hourFrznAccu']),
+        "layerFrznAccu": hour_frzn,
         "layerRainAccu": hour_rain,
         "layerSlr": hour_slr,
         "hourMelt": float(hour['hourMelt'])

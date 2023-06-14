@@ -31,11 +31,11 @@ def input_neighbors():
     input_(sheet_name='NEIGHBOR_PRECIP',
            csv_name=neighbors_csv,
            omit=[],
-           param='precipIN')
+           param='precip')
     input_(sheet_name='NEIGHBOR_TEMPS',
            csv_name=neighbors_csv,
            omit=[],
-           param='tempF')
+           param='temperature')
     worksheet = sheet.worksheet("NEIGHBOR_LATLONS")
     with open(neighbors_csv, "r") as file:
         reader = csv.reader(file)
@@ -55,14 +55,14 @@ def input_temp_conds():
     input_(sheet_name='TEMPERATURES',
            csv_name=temp_cond_csv,
            omit=[],
-           param='tempF')
+           param='temperature')
 
 def input_intensities():
     input_(sheet_name='PRECIPS',
            csv_name=intensity_csv,
            omit=['allAfterCut', 'point', 'nearest', 'absMinimum', 'absMaximum',
                  'rangeMinimim', 'rangeMaximum', 'rawPrecipRange', 'precipSlices'],
-           param='precipIN')
+           param='precip')
 
 def input_(sheet_name, csv_name, omit, param):
     worksheet = sheet.worksheet(sheet_name)
@@ -94,9 +94,9 @@ def input_point_forecast():
     with open(point_forecast_csv, "r") as file:
         reader = csv.reader(file)
         rows = []
-        omit = ['conditionString', 'precipMM', 'windDirectionDg', 'windSpeedKmh',
-                'windGustKmh', 'tempC', 'appTempC', 'validTimeLocal', 'windSpeedMS',
-                'windGustMS', 'lat/lon', 'weatherCode']
+        omit = ['conditionString', 'windDirection', 'windSpeed',
+                'windGust', 'apparentTemperature', 'validTimeLocal', 'windSpeed',
+                'lat/lon', 'weatherCode', 'irradiance', 'solar']
         for r in reader:
             if r[0] in omit:
                 r = None
@@ -106,13 +106,16 @@ def input_point_forecast():
                 r = [r[0]] + [v.split('T')[1] for v in r[1:]]
             elif r[0] == 'weather':
                 r = [r[0]] + [abbreviate_condition(v) for v in r[1:]]
-            elif r[0] == 'precipIN':
+            elif r[0] == 'precip':
                 r = [r[0]] + [round(ast.literal_eval(v), 3) for v in r[1:]]
+            elif r[0] == 'solar':
+                r = [r[0]] + [round(ast.literal_eval(v['altitude']), 3) for v in r[1:]]
             else:
                 r = [r[0]] + [(round(ast.literal_eval(v), 0)
                                if isinstance(ast.literal_eval(v), float)
                                else ast.literal_eval(v)) for v in r[1:]]
             rows.append(r)
+        print(rows)
         point_worksheet.update(rows)
 
 # input_point_forecast()
